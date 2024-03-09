@@ -33,12 +33,6 @@ if (isset($_SESSION["userdetails"])) {
                     align-items: center;
                 }
 
-                /* .logo {
-                    font-size: 27px;
-                    font-weight: 600;
-                    color: rgb(47, 141, 70);
-                } */
-
                 .message,
                 .logosec {
                     display: flex;
@@ -52,16 +46,6 @@ if (isset($_SESSION["userdetails"])) {
                     cursor: pointer;
                     /* margin-right: 120px; */
                 }
-
-                /* .circle {
-                    height: 7px;
-                    width: 7px;
-                    position: absolute;
-                    background-color: #fa7bb4;
-                    border-radius: 50%;
-                    left: 19px;
-                    top: 8px;
-                } */
 
                 .dp-dropdown {
                     display: none;
@@ -202,8 +186,6 @@ if (isset($_SESSION["userdetails"])) {
                     <div class="logo">Student</div>
                 </div>
                 <div class="message">
-                    <!-- <div class="circle"></div>
-                    <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183322/8.png" class="icn" alt=""> -->
                     <div class="dp">
                         <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210180014/profile-removebg-preview.png" class="dpicn" style=" height: 42px;">
                         <div class="dp-dropdown">
