@@ -24,8 +24,8 @@ if (isset($_POST["approve"])) {
     // Retrieve outpass ID from the form
     $outpassid = $_POST["outpassid"];
 
-    // Update outpass status to 3 (declined)
-    $sql = "UPDATE Outpasstable SET outpassstatus = 3 WHERE outpassid = $outpassid";
+    // Update outpass status to 2 (declined)
+    $sql = "UPDATE Outpasstable SET outpassstatus = 2 WHERE outpassid = $outpassid";
 
     if ($conn->query($sql) === TRUE) {
         // Outpass status updated successfully
