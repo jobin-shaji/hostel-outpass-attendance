@@ -7,7 +7,7 @@ if (isset($_POST["approve"])) {
     $outpassid = $_POST["outpassid"];
 
     // Update outpass status to 1 (approved)
-    $sql = "UPDATE Outpasstable SET outpassstatus = 1 WHERE outpassid = $outpassid";
+    $sql = "UPDATE Outpasstable SET outpassstatus = 1  WHERE outpassid = $outpassid";
 
     if ($conn->query($sql) === TRUE) {
         // Outpass status updated successfully
@@ -20,9 +20,10 @@ if (isset($_POST["approve"])) {
 } elseif (isset($_POST["decline"])) {
     // Retrieve outpass ID from the form
     $outpassid = $_POST["outpassid"];
+    $message = $_POST["message"];
 
     // Update outpass status to 2 (declined)
-    $sql = "UPDATE Outpasstable SET outpassstatus = 2 WHERE outpassid = $outpassid";
+    $sql = "UPDATE Outpasstable SET outpassstatus = 2 , message = '$message' WHERE outpassid = $outpassid";
 
     if ($conn->query($sql) === TRUE) {
         // Outpass status updated successfully
@@ -40,4 +41,3 @@ if (isset($_POST["approve"])) {
 
 // Close connection
 $conn->close();
-?>
