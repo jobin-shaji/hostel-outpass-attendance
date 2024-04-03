@@ -148,7 +148,7 @@ if (isset($_SESSION["userdetails"])) {
 
                 <div class="logosec" style="gap: 60px;">
                     <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210182541/Untitled-design-(30).png" style="  height: 30px; cursor: pointer;" id="menuicn" alt="menu-icon">
-                    <div class="logo">Student</div>
+                    <div style="color: black; font-size:30px;">ADMIN</div>
                 </div>
                 <div class="message">
                     <div class="dp">
@@ -208,7 +208,9 @@ if (isset($_SESSION["userdetails"])) {
                 </div>
                 <section class="bg-light w-100">
                     <div class=" mx-auto" style="width: 900px;">
-                        <div class="py-md-4">
+                        <div class="py-4 row" id="a1">
+
+                        </div>
                         <div class="row">
                             <div class="col">
                                 <div class="card">
@@ -219,8 +221,8 @@ if (isset($_SESSION["userdetails"])) {
                                                 <tr>
                                                     <th scope="col">#</th>
                                                     <th scope="col">Name</th>
-                                                    <th scope="col">Phone</th>
                                                     <th scope="col">Outdate</th>
+                                                    <th scope="col">Indate</th>
                                                     <th scope="col">Place</th>
                                                     <th scope="col">Reason</th>
                                                     <th scope="col">Action</th>
@@ -232,11 +234,7 @@ if (isset($_SESSION["userdetails"])) {
                                                 require("conn.php");
 
                                                 // Fetch rows with outpass status as 0 (pending)
-                                                $sql = "SELECT o.*, u.name AS student_name, h.phone
-                                FROM Outpasstable o
-                                INNER JOIN hostelinmatestable h ON o.inmateid = h.inmateid
-                                INNER JOIN usertable u ON h.userid = u.userid
-                                WHERE o.outpassstatus = 0";
+                                                $sql = "SELECT o.*, u.name AS student_name FROM Outpasstable o INNER JOIN hostelinmatestable h ON o.inmateid = h.inmateid INNER JOIN usertable u ON h.userid = u.userid WHERE o.outpassstatus = 0";
                                                 $result = $conn->query($sql);
 
                                                 if ($result->num_rows > 0) {
@@ -245,8 +243,8 @@ if (isset($_SESSION["userdetails"])) {
                                                         echo "<tr>";
                                                         echo "<th scope='row'>" . $row["outpassid"] . "</th>";
                                                         echo "<td>" . $row["student_name"] . "</td>";
-                                                        echo "<td>" . $row["phone"] . "</td>";
                                                         echo "<td>" . $row["exitdate"] . "</td>";
+                                                        echo "<td>" . $row["returndate"] . "</td>";
                                                         echo "<td>" . $row["place"] . "</td>";
                                                         echo "<td>" . $row["outpassdescription"] . "</td>";
                                                         echo "<td>";
@@ -265,6 +263,7 @@ if (isset($_SESSION["userdetails"])) {
                                                 // Close connection
                                                 $conn->close();
                                                 ?>
+
                                             </tbody>
                                         </table>
                                     </div>
