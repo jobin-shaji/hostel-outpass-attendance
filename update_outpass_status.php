@@ -11,10 +11,7 @@ if (isset($_POST["approve"])) {
 
     if ($conn->query($sql) === TRUE) {
         // Outpass status updated successfully
-        echo "<script>
-                alert('Outpass request approved successfully.'); 
-                window.location='admin_page.php';
-              </script>";
+        header("Location: admin_page.php");
         exit();
     } else {
         // Error updating outpass status
@@ -24,15 +21,12 @@ if (isset($_POST["approve"])) {
     // Retrieve outpass ID from the form
     $outpassid = $_POST["outpassid"];
 
-    // Update outpass status to 3 (declined)
-    $sql = "UPDATE Outpasstable SET outpassstatus = 3 WHERE outpassid = $outpassid";
+    // Update outpass status to 2 (declined)
+    $sql = "UPDATE Outpasstable SET outpassstatus = 2 WHERE outpassid = $outpassid";
 
     if ($conn->query($sql) === TRUE) {
         // Outpass status updated successfully
-        echo "<script>
-                alert('Outpass request declined successfully.'); 
-                window.location='admin_page.php';
-              </script>";
+        header("Location: admin_page.php");
         exit();
     } else {
         // Error updating outpass status
