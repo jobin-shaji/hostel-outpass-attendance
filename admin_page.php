@@ -156,8 +156,8 @@ if (isset($_SESSION["userdetails"])) {
                         <div class="dp-dropdown">
                             <ul>
                                 <li><a href="logout.php">Logout</a></li>
-                                <li><a href="#">Option 2</a></li>
-                                <li><a href="#">Option 3</a></li>
+                                <!-- <li><a href="#">Option 2</a></li>
+                                <li><a href="#">Option 3</a></li> -->
                             </ul>
                         </div>
                     </div>
@@ -178,10 +178,10 @@ if (isset($_SESSION["userdetails"])) {
                             <h4> Attendance</h4>
                         </div>
 
-                        <div class="nav-option d-flex option3">
+                        <!-- <div class="nav-option d-flex option3">
                             <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183320/5.png" class="nav-img" alt="report">
                             <h4> Laundry</h4>
-                        </div>
+                        </div> -->
 
                         <!-- <div class="nav-option d-flex option4">
                             <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183321/6.png" class="nav-img" alt="institution">
@@ -198,16 +198,16 @@ if (isset($_SESSION["userdetails"])) {
                             <h4> Settings</h4>
                         </div> -->
 
-                        <div class="nav-option d-flex logout">
+                        <!-- <div class="nav-option d-flex logout">
                             <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183321/7.png" class="nav-img" alt="logout">
                             <h4>Logout</h4>
-                        </div>
+                        </div> -->
 
                         <!-- </div> -->
                     </nav>
                 </div>
                 <section class="bg-light w-100">
-                    <div class=" mx-auto" style="width: 900px;">
+                    <div class=" mx-auto" style="width: 1200px;">
                         <div class="py-4 row" id="a1">
 
                         </div>
@@ -219,13 +219,14 @@ if (isset($_SESSION["userdetails"])) {
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col">#</th>
                                                     <th scope="col">Name</th>
                                                     <th scope="col">Outdate</th>
                                                     <th scope="col">Indate</th>
                                                     <th scope="col">Place</th>
                                                     <th scope="col">Reason</th>
                                                     <th scope="col">Action</th>
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Message</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -241,7 +242,6 @@ if (isset($_SESSION["userdetails"])) {
                                                     // Output data of each row
                                                     while ($row = $result->fetch_assoc()) {
                                                         echo "<tr>";
-                                                        echo "<th scope='row'>" . $row["outpassid"] . "</th>";
                                                         echo "<td>" . $row["student_name"] . "</td>";
                                                         echo "<td>" . $row["exitdate"] . "</td>";
                                                         echo "<td>" . $row["returndate"] . "</td>";
@@ -252,9 +252,12 @@ if (isset($_SESSION["userdetails"])) {
                                                         echo "<input type='hidden' name='outpassid' value='" . $row["outpassid"] . "'>";
                                                         echo "<button type='submit' name='approve' class='btn btn-success'>Approve</button>";
                                                         echo "&nbsp;";
-                                                        echo "<button type='submit' name='decline' class='btn btn-danger'>Decline</button>";
-                                                        echo "</form>";
                                                         echo "</td>";
+                                                        echo "<td>";
+                                                        echo "<button type='submit' name='decline' class='btn btn-danger'>Decline</button>";
+                                                        echo "</td>";
+                                                        echo "<td>" . "<input type='text' name='message'>" . "</td>";
+                                                        echo "</form>";
                                                         echo "</tr>";
                                                     }
                                                 } else {
@@ -270,6 +273,7 @@ if (isset($_SESSION["userdetails"])) {
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </section>
             </div>
             <script>
