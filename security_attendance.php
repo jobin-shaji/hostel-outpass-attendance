@@ -179,6 +179,10 @@ if (isset($_SESSION["userdetails"])) {
                     clear: both;
                     display: table;
                 }
+
+                a {
+                    text-decoration: none !important;
+                }
             </style>
         </head>
 
@@ -209,13 +213,13 @@ if (isset($_SESSION["userdetails"])) {
                 <div class="navcontainer">
                     <nav class="nav w-100 h-100 d-flex flex-column gap-4">
                         <!-- <div class="nav-upper-options"> -->
-                        <a href="security_attendance.php">
-                            <div class="nav-option d-flex option">
+                        <a href="security_page.php">
+                            <div class="nav-option d-flex ">
                                 <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210182148/Untitled-design-(29).png" class="nav-img" alt="dashboard">
                                 <h4> outpass</h4>
                             </div>
                         </a>
-                        <div class="d-flex nav-option">
+                        <div class="d-flex nav-option option">
                             <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183322/9.png" class="nav-img" alt="articles">
                             <h4> Attendance</h4>
                         </div>
@@ -243,7 +247,6 @@ if (isset($_SESSION["userdetails"])) {
                             <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183321/7.png" class="nav-img" alt="logout">
                             <h4>Logout</h4>
                         </div> -->
-
                         <!-- </div> -->
                     </nav>
                 </div>
@@ -251,16 +254,16 @@ if (isset($_SESSION["userdetails"])) {
 
                     <div class="my-5"></div>
                     <div class=" mx-auto p-3" style="width: 900px;" id="new">
-                        <div class="h3">Admission No</div>
+                        <div class="h3">Attendance</div>
 
                         <!-- The form -->
                         <form class="example" method="post" action="">
-                            <input type="text" placeholder="Search.." name="admission">
+                            <input type="text" placeholder="Admission No" name="admission">
                             <button name="search" type="submit"><i class="fa fa-search"></i></button>
                         </form>
                     </div>
 
-                    <div class=" mx-auto" style="width: 1200px;">
+                    <div class=" mx-auto" style="width: 900px;">
                         <div class="py-4 row" id="a1">
 
                         </div>
@@ -272,10 +275,6 @@ if (isset($_SESSION["userdetails"])) {
                                             <thead>
                                                 <tr>
                                                     <th scope="col">Name</th>
-                                                    <th scope="col">Outdate</th>
-                                                    <th scope="col">Indate</th>
-                                                    <th scope="col">Place</th>
-                                                    <th scope="col">Reason</th>
                                                     <th scope="col">Status</th>
                                                     <th scope="col">Action</th>
                                                 </tr>
@@ -285,37 +284,38 @@ if (isset($_SESSION["userdetails"])) {
                                                 if (isset($_POST['search'])) {
                                                     // Include database connection file
                                                     require("conn.php");
-                                                    // $inmateid = $_SESSION["inmatedetails"]["inmat
 
                                                     $admission = $_POST["admission"];
                                                     $sql = "
-                                                SELECT o.*, u.name AS student_name 
-FROM Outpasstable o 
-INNER JOIN hostelinmatestable h ON o.inmateid = h.inmateid 
-INNER JOIN usertable u ON h.userid = u.userid 
-WHERE h.admissionno = $admission AND o.outpassstatus = 1 AND o.returndate >= CURDATE()
-ORDER BY o.returndate ASC;
-                                                ";
+                                                    SELECT h.*, u.name AS student_name 
+                                                    FROM hostelinmatestable h 
+                                                    INNER JOIN usertable u ON h.userid = u.userid 
+                                                    WHERE h.admissionno = $admission 
+                                                    ";
                                                     $result = $conn->query($sql);
                                                     if ($result->num_rows > 0) {
                                                         // Output data of each row
                                                         while ($row = $result->fetch_assoc()) {
                                                             echo "<tr>";
                                                             echo "<td>" . $row["student_name"] . "</td>";
-                                                            echo "<td>" . $row["exitdate"] . "</td>";
-                                                            echo "<td>" . $row["returndate"] . "</td>";
-                                                            echo "<td>" . $row["place"] . "</td>";
-                                                            echo "<td>" . $row["outpassdescription"] . "</td>";
                                                             echo "<td>";
-                                                            echo "<button class='btn btn-success disabled'>Approved</button>";
+                                                            if ($row["inmatestatus"] == 0) {
+                                                                echo "<button class='btn btn-danger disabled'>IN</button>";
+                                                                echo "</td>";
+                                                                echo "<td>";
+                                                                echo "<form action='attendance_update.php' method='post'>";
+                                                                echo "<input type='hidden' name='inmateid' value='" . $row["inmateid"] . "'>";
+                                                                // Check if attendance date is less than current date
+                                                                if ($row["attendancedate"] < date('2024-04-05')) {
+                                                                    echo "<button name='mark' class='btn btn-danger'>MARK</button>";
+                                                                } else {
+                                                                    echo "<button name='marked' class='btn btn-success disabled'>MARKED</button>";
+                                                                }
+                                                                echo "</form>";
+                                                            } else {
+                                                                echo "<button class='btn btn-success disabled'>OUT</button>";
+                                                            }
                                                             echo "</td>";
-                                                            echo "<td>";
-                                                            echo "<form action='inmate_update.php' method='post'>";
-                                                            echo "<input type='hidden' name='inmateid' value='" . $row["inmateid"] . "'>";
-                                                            echo "<button name='in' class='btn btn-success '>IN</button>";
-                                                            echo "<button name='out' class='btn btn-danger '>OUT</button>";
-                                                            echo "</td>";
-                                                            echo "</form>";
                                                             echo "</tr>";
                                                         }
                                                     } else {
@@ -325,6 +325,7 @@ ORDER BY o.returndate ASC;
                                                     // $conn->close();
                                                 }
                                                 ?>
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -332,11 +333,10 @@ ORDER BY o.returndate ASC;
                             </div>
                         </div>
                     </div>
-                    <form action="update_inmate_status" method="post">
-                    </form>
 
 
-                    <!-- <div class=" mx-auto" style="width: 1200px;">
+
+                    <div class=" mx-auto" style="width: 1200px;">
                         <div class="py-4 row" id="a1">
 
                         </div>
@@ -344,57 +344,59 @@ ORDER BY o.returndate ASC;
                             <div class="col">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h5 class="card-title mb-4 d-inline">Pending Outpasses</h5>
+                                        <h5 class="card-title mb-4 d-inline">Unmarked Attendance</h5>
                                         <table class="table">
                                             <thead>
                                                 <tr>
+                                                    <th scope="col">Admission No</th>
                                                     <th scope="col">Name</th>
-                                                    <th scope="col">Outdate</th>
-                                                    <th scope="col">Indate</th>
-                                                    <th scope="col">Place</th>
-                                                    <th scope="col">Reason</th>
+                                                    <th scope="col">phone</th>
+                                                    <th scope="col">Last attendance</th>
+                                                    <th scope="col">Status</th>
                                                     <th scope="col">Action</th>
-                                                    <th scope="col"></th>
-                                                    <th scope="col">Message</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                
                                                 <?php
-                                                // // Include database connection file
-                                                // require("conn.php");
-
-                                                // // Fetch rows with outpass status as 0 (pending)
-                                                // $sql = "SELECT o.*, u.name AS student_name FROM Outpasstable o INNER JOIN hostelinmatestable h ON o.inmateid = h.inmateid INNER JOIN usertable u ON h.userid = u.userid WHERE o.outpassstatus = 0";
-                                                // $result = $conn->query($sql);
-
-                                                // if ($result->num_rows > 0) {
-                                                //     // Output data of each row
-                                                //     while ($row = $result->fetch_assoc()) {
-                                                //         echo "<tr>";
-                                                //         echo "<td>" . $row["student_name"] . "</td>";
-                                                //         echo "<td>" . $row["exitdate"] . "</td>";
-                                                //         echo "<td>" . $row["returndate"] . "</td>";
-                                                //         echo "<td>" . $row["place"] . "</td>";
-                                                //         echo "<td>" . $row["outpassdescription"] . "</td>";
-                                                //         echo "<td>";
-                                                //         echo "<form method='post' action='update_outpass_status.php'>";
-                                                //         echo "<input type='hidden' name='outpassid' value='" . $row["outpassid"] . "'>";
-                                                //         echo "<button type='submit' name='approve' class='btn btn-success'>Approve</button>";
-                                                //         echo "&nbsp;";
-                                                //         echo "</td>";
-                                                //         echo "<td>";
-                                                //         echo "<button type='submit' name='decline' class='btn btn-danger'>Decline</button>";
-                                                //         echo "</td>";
-                                                //         echo "<td>" . "<input type='text' name='message'>" . "</td>";
-                                                //         echo "</form>";
-                                                //         echo "</tr>";
-                                                //     }
-                                                // } else {
-                                                //     echo "<tr><td colspan='7'>No pending outpass requests.</td></tr>";
-                                                // }
-                                                // // Close connection
-                                                // $conn->close();
+                                                // Include database connection file
+                                                require("conn.php");
+                                                // Fetch rows with outpass status as 0 (pending)
+                                                $sql = "
+                                                SELECT h.*, u.name AS student_name  
+                                                FROM hostelinmatestable h 
+                                                INNER JOIN usertable u ON h.userid = u.userid 
+                                                WHERE h.attendancedate < CURDATE()
+                                                ";
+                                                $result = $conn->query($sql);
+                                                if ($result->num_rows > 0) {
+                                                    // Output data of each row
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo "<tr>";
+                                                        echo "<td>" . $row["admissionno"] . "</td>";
+                                                        echo "<td>" . $row["student_name"] . "</td>";
+                                                        echo "<td>" . $row["phone"] . "</td>";
+                                                        echo "<td>" . $row["attendancedate"] . "</td>";
+                                                        echo "<td>";
+                                                        if ($row["inmatestatus"] == 0) {
+                                                            echo "<button class='btn btn-danger disabled'>IN</button>";
+                                                            echo "</td>";
+                                                            echo "<td>";
+                                                            echo "<form action='attendance_update.php' method='post'>";
+                                                            echo "<input type='hidden' name='inmateid' value='" . $row["inmateid"] . "'>";
+                                                            // Check if attendance date is less than current date
+                                                            echo "<button name='mark' class='btn btn-danger'>MARK</button>";
+                                                            echo "</form>";
+                                                        } else {
+                                                            echo "<button class='btn btn-success disabled'>OUT</button>";
+                                                        }
+                                                        echo "</td>";
+                                                        echo "</tr>";
+                                                    }
+                                                } else {
+                                                    echo "<tr><td colspan='7'>No outpass.</td></tr>";
+                                                }
+                                                // Close connection
+                                                $conn->close();
                                                 ?>
 
                                             </tbody>
@@ -403,7 +405,7 @@ ORDER BY o.returndate ASC;
                                 </div>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                 </section>
             </div>
             <script>
