@@ -154,7 +154,7 @@ if (isset($_SESSION["userdetails"])) {
             FROM Outpasstable o 
             INNER JOIN hostelinmatestable h ON o.inmateid = h.inmateid 
             INNER JOIN usertable u ON h.userid = u.userid 
-            WHERE o.inmateid = $inmateid  AND  o.outpassstatus = '0'
+            WHERE o.inmateid = $inmateid  AND   o.outpassstatus = '{0,4}' 
             ORDER BY o.outpassid DESC";
 
             $result = $conn->query($sql);
@@ -179,14 +179,70 @@ if (isset($_SESSION["userdetails"])) {
                     $error_message = "Error: Unable to submit outpass request.";
                 }
             } else {
-                $error_message = "outpass request pending.";
+                // $error_message = "outpass request pending.";
             }
             // Close connection
-            $conn->close();
+            // $conn->close();
         }
         ?>
 
         <body>
+            <?php
+            // Include database connection file
+            // require("conn.php");
+
+            // if (isset($_POST["submit"])) {
+            // Retrieve user ID from session
+            $inmateid = $_SESSION["inmatedetails"]["inmateid"];
+
+            // Fetch rows with outpass status as 0 (pending)
+            $sql =
+            "
+            UPDATE Outpasstable o 
+            SET o.outpassstatus = 1 
+            WHERE o.returndate < CURRENT_TIME AND o.outpassstatus = 4;
+            ";
+
+            $result = $conn->query($sql);
+
+            $sql =
+                "
+            SELECT o.*, u.name AS student_name 
+            FROM Outpasstable o 
+            INNER JOIN hostelinmatestable h ON o.inmateid = h.inmateid 
+            INNER JOIN usertable u ON h.userid = u.userid 
+            WHERE o.inmateid = $inmateid AND o.returndate > CURRENT_TIME AND o.outpassstatus IN (0, 4)
+            ORDER BY o.outpassid DESC;            
+            ";
+
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                echo "
+                    <style>
+                    #new {
+                        display: none;
+                    }
+                
+                    #pend{
+                        display: block;
+                    }
+                    </style>
+                    ";
+            } else {
+                echo "
+                    <style>
+                    #pend{
+                        display: none;
+                    }
+                
+                    #new {
+                        display: block;
+                    }
+                    </style>
+                    ";
+            }
+            ?>
 
             <!-- for header part -->
             <header>
@@ -201,8 +257,8 @@ if (isset($_SESSION["userdetails"])) {
                         <div class="dp-dropdown">
                             <ul>
                                 <li><a href="logout.php">Logout</a></li>
-                                <li><a href="#">Option 2</a></li>
-                                <li><a href="#">Option 3</a></li>
+                                <!-- <li><a href="#">Option 2</a></li>
+                                <li><a href="#">Option 3</a></li> -->
                             </ul>
                         </div>
                     </div>
@@ -223,10 +279,10 @@ if (isset($_SESSION["userdetails"])) {
                             <h4> Attendance</h4>
                         </div>
 
-                        <div class="nav-option d-flex option3">
+                        <!-- <div class="nav-option d-flex option3">
                             <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183320/5.png" class="nav-img" alt="report">
                             <h4> Laundry</h4>
-                        </div>
+                        </div> -->
 
                         <!-- <div class="nav-option d-flex option4">
                             <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183321/6.png" class="nav-img" alt="institution">
@@ -270,10 +326,9 @@ if (isset($_SESSION["userdetails"])) {
                         </div>
                     <?php } ?>
 
-                    <div class=" mx-auto" style="width: 1200px;">
-                        <div class="py-4 row" id="a1">
-
-                        </div>
+                    <div class="py-4 row" id="a1">
+                    </div>
+                    <div class=" mx-auto" style="width: 1200px;" id="pend">
                         <div class="row">
                             <div class="col">
                                 <div class="card">
@@ -287,8 +342,8 @@ if (isset($_SESSION["userdetails"])) {
                                                     <th scope="col">Indate</th>
                                                     <th scope="col">Place</th>
                                                     <th scope="col">Reason</th>
-                                                    <th scope="col">Action</th>
-                                                    <th scope="col">Message</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col">action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -298,30 +353,43 @@ if (isset($_SESSION["userdetails"])) {
                                                 $inmateid = $_SESSION["inmatedetails"]["inmateid"];
 
                                                 // Fetch rows with outpass status as 0 (pending)
-                                                $sql = "SELECT o.*, u.name AS student_name 
+                                                $sql =
+                                                    "
+                                                SELECT o.*, u.name AS student_name 
                                                 FROM Outpasstable o 
                                                 INNER JOIN hostelinmatestable h ON o.inmateid = h.inmateid 
                                                 INNER JOIN usertable u ON h.userid = u.userid 
-                                                WHERE o.inmateid = $inmateid  
-                                                ORDER BY o.outpassid DESC";
+                                                WHERE o.inmateid = $inmateid AND o.returndate > CURRENT_TIME 
+                                                ORDER BY o.outpassid DESC
+                                                ";
 
                                                 $result = $conn->query($sql);
 
                                                 if ($result->num_rows > 0) {
                                                     // Output data of each row
                                                     while ($row = $result->fetch_assoc()) {
-                                                        if ($row["outpassstatus"] == 0) {
+                                                        if ($row["outpassstatus"] == 0 or $row["outpassstatus"] == 4) {
                                                             echo "<tr>";
                                                             // echo "<td>" . $row["student_name"] . "</td>";
                                                             echo "<td>" . $row["exitdate"] . "</td>";
                                                             echo "<td>" . $row["returndate"] . "</td>";
                                                             echo "<td>" . $row["place"] . "</td>";
                                                             echo "<td>" . $row["outpassdescription"] . "</td>";
+
                                                             echo "<td>";
-                                                            echo "<button class='btn btn-warning disabled'>pending</button>";
+                                                            if ($row["outpassstatus"] == 0) {
+                                                                echo "<button class='btn btn-warning disabled'>pending</button>";
+                                                            } else {
+                                                                echo "<button class='btn btn-success disabled'>Active</button>";
+                                                            }
+
                                                             echo "</td>";
-                                                            echo "<td>" . $row["message"] . "</td>";
-                                                            // echo "</form>";
+                                                            echo "<td>";
+                                                            echo "<form action='update_outpass_status.php' method='post'>";
+                                                            echo "<input type='hidden' name='outpassid' value='" . $row["outpassid"] . "'>";
+                                                            echo "<button type='submit' name='close' class='btn-close' aria-label='Close'></button>";
+                                                            echo "</form>";
+                                                            echo "</td>";
                                                             echo "</tr>";
                                                         }
                                                     }
@@ -329,7 +397,7 @@ if (isset($_SESSION["userdetails"])) {
                                                     echo "<tr><td colspan='7'>No pending outpass requests.</td></tr>";
                                                 }
                                                 // Close connection
-                                                $conn->close();
+                                                // $conn->close();
                                                 ?>
 
                                             </tbody>
@@ -341,7 +409,7 @@ if (isset($_SESSION["userdetails"])) {
                     </div>
 
 
-                    <div class=" mx-auto" style="width: 900px;">
+                    <div class=" mx-auto" style="width: 900px;" id="new">
                         <!-- <div class="py-md-4"> -->
                         <div class="bg-white shadow wrap my-1 d-flex justify-content-center border border-subtle-substitute rounded">
                             <div class="w-50 bg-info d-flex flex-column justify-content-center text-white" style="padding:0px 30px ; " id="l">
@@ -403,10 +471,7 @@ if (isset($_SESSION["userdetails"])) {
                         </button>
                     </div>
 
-                    <div class=" mx-auto" style="width: 1200px;">
-                        <div class="py-4 row" id="a1">
-
-                        </div>
+                    <div class=" mx-auto" style="width: 1100px;">
                         <div class="row">
                             <div class="col">
                                 <div class="card">
@@ -419,7 +484,7 @@ if (isset($_SESSION["userdetails"])) {
                                                     <th scope="col">Indate</th>
                                                     <th scope="col">Place</th>
                                                     <th scope="col">Reason</th>
-                                                    <th scope="col">Action</th>
+                                                    <th scope="col">Status</th>
                                                     <th scope="col">Message</th>
                                                 </tr>
                                             </thead>
@@ -442,7 +507,7 @@ if (isset($_SESSION["userdetails"])) {
                                                 if ($result->num_rows > 0) {
                                                     // Output data of each row
                                                     while ($row = $result->fetch_assoc()) {
-                                                        if ($row["outpassstatus"] != 0) {
+                                                        if ($row["outpassstatus"] != 0 and $row["outpassstatus"] != 4) {
                                                             echo "<tr>";
                                                             // echo "<td>" . $row["student_name"] . "</td>";
                                                             echo "<td>" . $row["exitdate"] . "</td>";
@@ -453,8 +518,10 @@ if (isset($_SESSION["userdetails"])) {
                                                             // echo "<button class='btn btn-warning disabled'>pending</button>";
                                                             if ($row["outpassstatus"] == 1) {
                                                                 echo "<button class='btn btn-success disabled'>Approved</button>";
-                                                            } else {
+                                                            } elseif ($row["outpassstatus"] == 2) {
                                                                 echo "<button class='btn btn-danger disabled'>Declined </button>";
+                                                            } else {
+                                                                echo "<button class='btn btn-secondary disabled'>Canceled </button>";
                                                             }
                                                             echo "</td>";
                                                             echo "<td>" . $row["message"] . "</td>";
@@ -466,9 +533,8 @@ if (isset($_SESSION["userdetails"])) {
                                                     echo "<tr><td colspan='7'>No pending outpass requests.</td></tr>";
                                                 }
                                                 // Close connection
-                                                $conn->close();
+                                                // $conn->close();
                                                 ?>
-
                                             </tbody>
                                         </table>
                                     </div>
@@ -563,6 +629,7 @@ if (isset($_SESSION["userdetails"])) {
 } else {
     header("Location: login.php");
 }
+$conn->close();
 ?>
 
         </html>
