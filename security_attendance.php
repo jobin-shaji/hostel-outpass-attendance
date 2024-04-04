@@ -179,10 +179,6 @@ if (isset($_SESSION["userdetails"])) {
                     clear: both;
                     display: table;
                 }
-
-                a {
-                    text-decoration: none !important;
-                }
             </style>
         </head>
 
@@ -213,17 +209,16 @@ if (isset($_SESSION["userdetails"])) {
                 <div class="navcontainer">
                     <nav class="nav w-100 h-100 d-flex flex-column gap-4">
                         <!-- <div class="nav-upper-options"> -->
-                        <div class="nav-option d-flex option">
-                            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210182148/Untitled-design-(29).png" class="nav-img" alt="dashboard">
-                            <h4> outpass</h4>
-                        </div>
-
                         <a href="security_attendance.php">
-                            <div class="d-flex nav-option">
-                                <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183322/9.png" class="nav-img" alt="articles">
-                                <h4> Attendance</h4>
+                            <div class="nav-option d-flex option">
+                                <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210182148/Untitled-design-(29).png" class="nav-img" alt="dashboard">
+                                <h4> outpass</h4>
                             </div>
                         </a>
+                        <div class="d-flex nav-option">
+                            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183322/9.png" class="nav-img" alt="articles">
+                            <h4> Attendance</h4>
+                        </div>
                         <!-- <div class="nav-option d-flex option3">
                             <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183320/5.png" class="nav-img" alt="report">
                             <h4> Laundry</h4>
@@ -294,11 +289,11 @@ if (isset($_SESSION["userdetails"])) {
 
                                                     $admission = $_POST["admission"];
                                                     $sql = "
-                                                SELECT o.*, u.name AS student_name ,h.inmatestatus
+                                                SELECT o.*, u.name AS student_name 
 FROM Outpasstable o 
 INNER JOIN hostelinmatestable h ON o.inmateid = h.inmateid 
 INNER JOIN usertable u ON h.userid = u.userid 
-WHERE h.admissionno = $admission AND o.outpassstatus = 4 AND o.returndate >= CURDATE()
+WHERE h.admissionno = $admission AND o.outpassstatus = 1 AND o.returndate >= CURDATE()
 ORDER BY o.returndate ASC;
                                                 ";
                                                     $result = $conn->query($sql);
@@ -312,20 +307,13 @@ ORDER BY o.returndate ASC;
                                                             echo "<td>" . $row["place"] . "</td>";
                                                             echo "<td>" . $row["outpassdescription"] . "</td>";
                                                             echo "<td>";
-                                                            if ($row["inmatestatus"] == '0') {
-                                                                echo "<button name='in' class='btn btn-success disabled'>IN</button>";
-                                                            } else {
-                                                                echo "<button name='out' class='btn btn-danger disabled'>OUT</button>";
-                                                            }
+                                                            echo "<button class='btn btn-success disabled'>Approved</button>";
                                                             echo "</td>";
                                                             echo "<td>";
                                                             echo "<form action='inmate_update.php' method='post'>";
                                                             echo "<input type='hidden' name='inmateid' value='" . $row["inmateid"] . "'>";
-                                                            if ($row["inmatestatus"] == '0') {
-                                                                echo "<button name='out' class='btn btn-danger '>OUT</button>";
-                                                            } else {
-                                                                echo "<button name='in' class='btn btn-success '>IN</button>";
-                                                            }
+                                                            echo "<button name='in' class='btn btn-success '>IN</button>";
+                                                            echo "<button name='out' class='btn btn-danger '>OUT</button>";
                                                             echo "</td>";
                                                             echo "</form>";
                                                             echo "</tr>";

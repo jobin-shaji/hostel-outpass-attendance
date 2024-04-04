@@ -274,6 +274,151 @@ if (isset($_SESSION["userdetails"])) {
                             </div>
                         </div>
                     </div>
+
+                    <div class=" mx-auto" style="margin-top:30px; width: 500px;">
+                        </button><button class="w-75 h3 p-2 bg-secondary" style=" color: white; border: none; border-radius: 5px; cursor: pointer; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: background-color 0.3s ease-in-out;">
+                        <!-- background-color: #FFA500; -->
+                        History
+                        </button>
+                    </div>
+
+                    <div class=" mx-auto" style="width: 1200px;">
+                        <div class="py-4 row " id="a1">
+
+                        </div>
+                        <div class=" row ">
+                            <div class="col">
+                                <div class="card ">
+                                    <div class="card-body ">
+                                        <h5 class="card-title mb-4 d-inline ">Approved Outpasses</h5>
+                                        <table class="table ">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Outdate</th>
+                                                    <th scope="col">Indate</th>
+                                                    <th scope="col">Place</th>
+                                                    <th scope="col">Reason</th>
+                                                    <th scope="col">Message</th>
+                                                    <th scope="col">Action</th>
+                                                    <!-- <th scope="col"></th> -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                // Include database connection file
+                                                require("conn.php");
+
+                                                // Fetch rows with outpass status as 0 (pending)
+                                                $sql = "SELECT o.*, u.name AS student_name FROM Outpasstable o INNER JOIN hostelinmatestable h ON o.inmateid = h.inmateid INNER JOIN usertable u ON h.userid = u.userid WHERE o.outpassstatus = 1 OR o.outpassstatus = 4";
+                                                $result = $conn->query($sql);
+
+                                                if ($result->num_rows > 0) {
+                                                    // Output data of each row
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo "<tr>";
+                                                        echo "<td>" . $row["student_name"] . "</td>";
+                                                        echo "<td>" . $row["exitdate"] . "</td>";
+                                                        echo "<td>" . $row["returndate"] . "</td>";
+                                                        echo "<td>" . $row["place"] . "</td>";
+                                                        echo "<td>" . $row["outpassdescription"] . "</td>";
+                                                        echo "<td>" . $row["message"] . "</td>";
+                                                        echo "<td>";
+                                                        // echo "<form method='post' action='update_outpass_status.php'>";
+                                                        // echo "<input type='hidden' name='outpassid' value='" . $row["outpassid"] . "'>";
+                                                        echo "<button type='submit' name='approve' class='btn btn-success disabled'>Approved</button>";
+                                                        // echo "&nbsp;";
+                                                        echo "</td>";
+                                                        // echo "<td>";
+                                                        // echo "<button type='submit' name='decline' class='btn btn-danger'>Decline</button>";
+                                                        // echo "</td>";
+                                                        // echo "<td>" . "<input type='text' name='message'>" . "</td>";
+                                                        // echo "</form>";
+                                                        echo "</tr>";
+                                                    }
+                                                } else {
+                                                    echo "<tr><td colspan='7'>No pending outpass requests.</td></tr>";
+                                                }
+                                                // Close connection
+                                                $conn->close();
+                                                ?>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class=" mx-auto" style="width: 1200px;">
+                        <div class="py-4 row" id="a1">
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4 d-inline">Declined Outpasses</h5>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Outdate</th>
+                                                    <th scope="col">Indate</th>
+                                                    <th scope="col">Place</th>
+                                                    <th scope="col">Reason</th>
+                                                    <th scope="col">Message</th>
+                                                    <th scope="col">Action</th>
+                                                    <!-- <th scope="col"></th> -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                // Include database connection file
+                                                require("conn.php");
+
+                                                // Fetch rows with outpass status as 0 (pending)
+                                                $sql = "SELECT o.*, u.name AS student_name FROM Outpasstable o INNER JOIN hostelinmatestable h ON o.inmateid = h.inmateid INNER JOIN usertable u ON h.userid = u.userid WHERE o.outpassstatus = 2";
+                                                $result = $conn->query($sql);
+                                                if ($result->num_rows > 0) {
+                                                    // Output data of each row
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo "<tr>";
+                                                        echo "<td>" . $row["student_name"] . "</td>";
+                                                        echo "<td>" . $row["exitdate"] . "</td>";
+                                                        echo "<td>" . $row["returndate"] . "</td>";
+                                                        echo "<td>" . $row["place"] . "</td>";
+                                                        echo "<td>" . $row["outpassdescription"] . "</td>";
+                                                        echo "<td>" . $row["message"] . "</td>";
+                                                        echo "<td>";
+                                                        // echo "<form method='post' action='update_outpass_status.php'>";
+                                                        // echo "<input type='hidden' name='outpassid' value='" . $row["outpassid"] . "'>";
+                                                        // echo "<button type='submit' name='approve' class='btn btn-success disabled'>Approved</button>";
+                                                        // echo "&nbsp;";
+                                                        // echo "</td>";
+                                                        // echo "<td>";
+                                                        echo "<button type='submit' name='decline' class='btn btn-danger disabled'>Declined</button>";
+                                                        echo "</td>";
+                                                        // echo "<td>" . "<input type='text' name='message'>" . "</td>";
+                                                        // echo "</form>";
+                                                        echo "</tr>";
+                                                    }
+                                                } else {
+                                                    echo "<tr><td colspan='7'>No pending outpass requests.</td></tr>";
+                                                }
+                                                // Close connection
+                                                $conn->close();
+                                                ?>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </section>
             </div>
             <script>
