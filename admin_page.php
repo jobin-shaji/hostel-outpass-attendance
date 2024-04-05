@@ -138,44 +138,8 @@ if (isset($_SESSION["userdetails"])) {
                     border-left: 5px solid #010058af;
                     background-color: white
                 }
-
-                /* Style the search field */
-                form.example input[type=text] {
-                    padding: 10px;
-                    font-size: 17px;
-                    border: 1px solid grey;
-                    float: left;
-                    width: 80%;
-                    background: #f1f1f1;
-                }
-
-                /* Style the submit button */
-                form.example button {
-                    float: left;
-                    width: 20%;
-                    padding: 10px;
-                    background: #2196F3;
-                    color: white;
-                    font-size: 17px;
-                    border: 1px solid grey;
-                    border-left: none;
-                    /* Prevent double borders */
-                    cursor: pointer;
-                }
-
-                form.example button:hover {
-                    background: #0b7dda;
-                }
-
-                /* Clear floats */
-                form.example::after {
-                    content: "";
-                    clear: both;
-                    display: table;
-                }
-
-                a {
-                    text-decoration: none !important;
+                a{
+                    text-decoration: none;
                 }
             </style>
         </head>
@@ -213,10 +177,10 @@ if (isset($_SESSION["userdetails"])) {
                         </div>
 
                         <a href="admin_attendance.php">
-                            <div class="d-flex nav-option">
-                                <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183322/9.png" class="nav-img" alt="articles">
-                                <h4> Attendance</h4>
-                            </div>
+                        <div class="d-flex nav-option">
+                            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210183322/9.png" class="nav-img" alt="articles">
+                            <h4> Attendance</h4>
+                        </div>
                         </a>
 
                         <!-- <div class="nav-option d-flex option3">
@@ -318,8 +282,8 @@ if (isset($_SESSION["userdetails"])) {
 
                     <div class=" mx-auto" style="margin-top:30px; width: 500px;">
                         </button><button class="w-75 h3 p-2 bg-secondary" style=" color: white; border: none; border-radius: 5px; cursor: pointer; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: background-color 0.3s ease-in-out;">
-                            <!-- background-color: #FFA500; -->
-                            History
+                        <!-- background-color: #FFA500; -->
+                        History
                         </button>
                     </div>
 
