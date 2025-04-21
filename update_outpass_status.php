@@ -7,14 +7,11 @@ if (isset($_POST["approve"])) {
     $outpassid = $_POST["outpassid"];
 
     // Update outpass status to 1 (approved)
-    $sql = "UPDATE Outpasstable SET outpassstatus = 1 WHERE outpassid = $outpassid";
+    $sql = "UPDATE Outpasstable SET outpassstatus = 4  WHERE outpassid = $outpassid";
 
     if ($conn->query($sql) === TRUE) {
         // Outpass status updated successfully
-        echo "<script>
-                alert('Outpass request approved successfully.'); 
-                window.location='admin_page.php';
-              </script>";
+        header("Location: admin_page.php");
         exit();
     } else {
         // Error updating outpass status
@@ -23,16 +20,30 @@ if (isset($_POST["approve"])) {
 } elseif (isset($_POST["decline"])) {
     // Retrieve outpass ID from the form
     $outpassid = $_POST["outpassid"];
+    $message = $_POST["message"];
 
-    // Update outpass status to 3 (declined)
-    $sql = "UPDATE Outpasstable SET outpassstatus = 3 WHERE outpassid = $outpassid";
+    // Update outpass status to 2 (declined)
+    $sql = "UPDATE Outpasstable SET outpassstatus = 2 , message = '$message' WHERE outpassid = $outpassid";
 
     if ($conn->query($sql) === TRUE) {
         // Outpass status updated successfully
-        echo "<script>
-                alert('Outpass request declined successfully.'); 
-                window.location='admin_page.php';
-              </script>";
+        header("Location: admin_page.php");
+        exit();
+    } else {
+        // Error updating outpass status
+        echo "<script>alert('Error: Unable to update outpass status.')</script>";
+    }
+} elseif (isset($_POST["close"])) {
+    // Retrieve outpass ID from the form
+    $outpassid = $_POST["outpassid"];
+    // $message = $_POST["message"];
+
+    // Update outpass status to 3 (declined)
+    $sql = "UPDATE Outpasstable SET outpassstatus = 3  WHERE outpassid = $outpassid";
+
+    if ($conn->query($sql) === TRUE) {
+        // Outpass status updated successfully
+        header("Location: user_page.php");
         exit();
     } else {
         // Error updating outpass status
@@ -46,4 +57,3 @@ if (isset($_POST["approve"])) {
 
 // Close connection
 $conn->close();
-?>
