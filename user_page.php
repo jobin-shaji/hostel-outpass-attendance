@@ -48,11 +48,20 @@ $currentOutpass = !empty($outpassList) ? reset($outpassList) : null;
 function getStatusText($status) {
     switch ($status) {
         case 0: return "Pending";
-        case 1: return "Approved";
         case 2: return "Declined";
         case 3: return "Canceled";
         case 4: return "Active";
         default: return "Unknown";
+    }
+}
+
+function getStatusBadgeClass($status) {
+    switch ($status) {
+        case 0: return "bg-warning";
+        case 2: return "bg-danger";
+        case 3: return "bg-secondary";
+        case 4: return "bg-primary";
+        default: return "bg-secondary";
     }
 }
 ?>
@@ -68,24 +77,36 @@ function getStatusText($status) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <style>
+        :root {
+            --primary-color: #4a90e2;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --secondary-color: #6c757d;
+            --light-bg: #f8f9fa;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
         body {
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            padding-top: 70px; /* Account for fixed header */
+            padding-top: 70px;
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         header {
             height: 70px;
             width: 100%;
             padding: 0 20px;
-            background-color: whitesmoke;
+            background-color: white;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 100;
-            box-shadow: 1px 1px 15px rgba(161, 182, 253, 0.825);
+            box-shadow: var(--shadow);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -98,12 +119,9 @@ function getStatusText($status) {
         }
 
         .logo {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .message {
-            position: relative;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-color);
         }
 
         .dp {
@@ -116,12 +134,18 @@ function getStatusText($status) {
             position: absolute;
             top: 100%;
             right: 0;
-            background-color: #ffffff;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 170px;
+            background-color: white;
+            padding: 8px 0;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            width: 180px;
             z-index: 101;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .dp:hover .dp-dropdown {
@@ -135,24 +159,68 @@ function getStatusText($status) {
         }
 
         .dp-dropdown li {
-            padding: 8px 0;
+            padding: 8px 16px;
+            transition: background-color 0.2s;
+        }
+
+        .dp-dropdown li:hover {
+            background-color: var(--light-bg);
         }
 
         .dp-dropdown a {
             text-decoration: none;
             color: #333;
             display: block;
-        }
-
-        .dp-dropdown a:hover {
-            color: #007bff;
+            font-size: 0.95rem;
         }
 
         .main-content {
-            padding: 20px;
+            padding: 30px;
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: none;
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding: 1.25rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.8rem;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            padding: 0.5rem 0.75rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
         }
 
         .date-row {
@@ -164,6 +232,12 @@ function getStatusText($status) {
         .date-field {
             flex: 1;
             min-width: 250px;
+        }
+
+        .badge {
+            padding: 0.5em 0.8em;
+            font-weight: 500;
+            border-radius: 6px;
         }
 
         @media (max-width: 768px) {
@@ -178,35 +252,13 @@ function getStatusText($status) {
             .date-field {
                 min-width: 100%;
             }
+
+            .card-header {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
-
-    <script>
-        function validateDates() {
-            const outdate = new Date(document.getElementById('outdate').value);
-            const indate = new Date(document.getElementById('indate').value);
-            
-            if (outdate >= indate) {
-                alert('Out Date must be before In Date');
-                return false;
-            }
-            
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            if (outdate < today) {
-                alert('Out Date cannot be in the past');
-                return false;
-            }
-            
-            return true;
-        }
-
-        function updateMinInDate() {
-            const outdate = document.getElementById('outdate').value;
-            document.getElementById('indate').min = outdate;
-        }
-    </script>
 </head>
 
 <body>
@@ -256,15 +308,17 @@ function getStatusText($status) {
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h3 class="mb-0">Current Outpass Request</h3>
-                        <?php if ($currentOutpass['outpassstatus'] == 0): ?>
-                            <div>
+                        <div>
+                            <?php if ($currentOutpass['outpassstatus'] == 0): ?>
                                 <button type="button" class="btn btn-primary btn-sm" onclick="showEditForm()">Edit</button>
+                            <?php endif; ?>
+                            <?php if (in_array($currentOutpass['outpassstatus'], [0, 4])): ?>
                                 <form method="post" action="update_outpass_status.php" style="display:inline;">
                                     <input type="hidden" name="outpassid" value="<?php echo $currentOutpass['_id']; ?>">
-                                    <button type="submit" name="close" class="btn btn-danger btn-sm">Cancel</button>
+                                    <button type="submit" name="close" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this outpass?')">Cancel</button>
                                 </form>
-                            </div>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -282,9 +336,7 @@ function getStatusText($status) {
                             </div>
                             <div class="col-md-6 mb-2">
                                 <strong>Status:</strong> 
-                                <span class="badge <?php echo $currentOutpass['outpassstatus'] == 0 ? 'bg-warning' : 
-                                    ($currentOutpass['outpassstatus'] == 1 ? 'bg-success' : 
-                                    ($currentOutpass['outpassstatus'] == 4 ? 'bg-primary' : 'bg-danger')); ?>">
+                                <span class="badge <?php echo getStatusBadgeClass($currentOutpass['outpassstatus']); ?>">
                                     <?php echo getStatusText($currentOutpass['outpassstatus']); ?>
                                 </span>
                             </div>

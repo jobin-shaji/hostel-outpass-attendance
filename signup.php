@@ -7,8 +7,6 @@ if (isset($_SESSION["userdetails"])) {
     $row = $_SESSION["userdetails"];
     if ($row['usertype'] == 3) {
         header("Location: admin_page.php");
-    } elseif ($row['usertype'] == 2) {
-        header("Location: security_page.php");
     } else {
         header("Location: user_page.php");
     }
@@ -29,11 +27,129 @@ if (isset($_SESSION["userdetails"])) {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
         <style>
+            :root {
+                --primary-color: #4a90e2;
+                --danger-color: #dc3545;
+                --success-color: #28a745;
+                --warning-color: #ffc107;
+                --secondary-color: #6c757d;
+                --light-bg: #f8f9fa;
+                --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            body {
+                min-height: 100vh;
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+                background-color: var(--light-bg);
+            }
+
+            .wrap {
+                background: white;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: var(--shadow);
+                border: none !important;
+            }
+
+            .img-fluid {
+                min-height: 600px;
+                background-position: center;
+                background-size: cover;
+                position: relative;
+            }
+
+            .img-fluid::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.2);
+            }
+
+            h3 {
+                color: #333;
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+            }
+
+            .form-control {
+                border-radius: 6px;
+                border: 1px solid #dee2e6;
+                padding: 0.6rem 0.75rem;
+                transition: border-color 0.2s, box-shadow 0.2s;
+                margin-bottom: 0.5rem;
+            }
+
+            .form-control:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+            }
+
             /* input box number inner scrollbar disabled */
             input::-webkit-outer-spin-button,
             input::-webkit-inner-spin-button {
                 -webkit-appearance: none;
                 margin: 0;
+            }
+
+            label {
+                color: #555;
+                margin-bottom: 0.3rem;
+                font-weight: 500;
+            }
+
+            .btn {
+                padding: 0.6rem 1rem;
+                font-weight: 500;
+                border-radius: 6px;
+                transition: all 0.2s;
+            }
+
+            .btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+
+            .text-danger {
+                font-size: 0.875rem;
+                min-height: 20px;
+                margin-top: 0.25rem;
+            }
+
+            a {
+                color: var(--primary-color);
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+
+            a:hover {
+                color: darken(var(--primary-color), 10%);
+            }
+
+            @media (max-width: 768px) {
+                .mx-auto {
+                    width: 100% !important;
+                    padding: 15px;
+                }
+
+                .img-fluid {
+                    display: none;
+                }
+
+                .wrap > div:last-child {
+                    width: 100% !important;
+                }
+
+                .row {
+                    margin: 0;
+                }
+
+                .col-5, .col-6 {
+                    width: 100%;
+                    padding: 0 0 1rem 0;
+                }
             }
         </style>
     </head>

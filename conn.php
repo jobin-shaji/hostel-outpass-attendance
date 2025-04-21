@@ -2,7 +2,6 @@
 /*
     usertype 
     3 -> admin
-    2 -> security
     1 -> user default
     
     userstatus
