@@ -110,43 +110,7 @@ $outpassList = iterator_to_array($activeOutpasses);
         }
 
         .container-fluid {
-            height: calc(100vh - 70px);
-        }
-
-        .row {
-            margin: 0;
-            height: 100%;
-        }
-
-        .col-auto {
-            padding: 0;
-            background-color: #212529;
-            min-height: calc(100vh - 70px);
-            position: fixed;
-            left: 0;
-            top: 70px;
-            width: 250px;
-            z-index: 1020;
-        }
-
-        .nav {
-            padding-top: 20px;
-        }
-
-        .nav-link {
-            padding: 12px 20px;
-            color: rgba(255, 255, 255, 0.8) !important;
-            transition: all 0.3s;
-        }
-
-        .nav-link:hover {
-            color: #fff !important;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .col.py-3 {
-            margin-left: 250px;
-            padding: 20px 30px;
+            padding: 20px;
         }
 
         .table-responsive {
@@ -162,23 +126,6 @@ $outpassList = iterator_to_array($activeOutpasses);
         }
 
         @media (max-width: 768px) {
-            .col-auto {
-                width: 60px;
-            }
-
-            .col.py-3 {
-                margin-left: 60px;
-            }
-
-            .nav-link {
-                padding: 12px;
-                text-align: center;
-            }
-
-            .nav-link span {
-                display: none;
-            }
-
             header {
                 padding: 0 10px;
             }
@@ -193,7 +140,6 @@ $outpassList = iterator_to_array($activeOutpasses);
 <body>
     <header>
         <div class="logosec">
-            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20221210182541/Untitled-design-(30).png" style="height: 30px; cursor: pointer;" id="menuicn" alt="menu-icon">
             <div class="logo-text" style="color: black; font-size:24px;">Staff Portal</div>
         </div>
         <div class="message">
@@ -209,59 +155,47 @@ $outpassList = iterator_to_array($activeOutpasses);
     </header>
 
     <div class="container-fluid">
-        <div class="row flex-nowrap">
-            <div class="col-auto px-0">
-                <nav class="nav flex-column">
-                    <a href="#" class="nav-link" style="background: rgba(255,255,255,0.1);">
-                        <i class="fa fa-file-text me-2"></i>
-                        <span>Outpass</span>
-                    </a>
-                </nav>
-            </div>
-            <div class="col py-3">
-                <div class="container">
-                    <h2 class="mb-4">Active Outpasses</h2>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Admission No</th>
-                                    <th>Name</th>
-                                    <th>Place</th>
-                                    <th>Purpose</th>
-                                    <th>Out Date</th>
-                                    <th>In Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                foreach ($outpassList as $outpass) {
-                                    $inmate = $db->hostelinmatestable->findOne([
-                                        '_id' => $outpass['inmateid']
-                                    ]);
-                                    $user = $db->usertable->findOne([
-                                        '_id' => $inmate['userid']
-                                    ]);
-                                    echo "<tr>";
-                                    echo "<td>" . $inmate['admissionno'] . "</td>";
-                                    echo "<td>" . $user['name'] . "</td>";
-                                    echo "<td>" . $outpass['place'] . "</td>";
-                                    echo "<td>" . $outpass['purpose'] . "</td>";
-                                    echo "<td>" . date('Y-m-d', $outpass['outdate']->toDateTime()->getTimestamp()) . "</td>";
-                                    echo "<td>" . date('Y-m-d', $outpass['indate']->toDateTime()->getTimestamp()) . "</td>";
-                                    echo "<td>";
-                                    if ($outpass['outpassstatus'] == 4) {
-                                        echo "Active";
-                                    }
-                                    echo "</td>";
-                                    echo "</tr>";
-                                }
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <div class="container">
+            <h2 class="mb-4">Active Outpasses</h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Admission No</th>
+                            <th>Name</th>
+                            <th>Place</th>
+                            <th>Purpose</th>
+                            <th>Out Date</th>
+                            <th>In Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($outpassList as $outpass) {
+                            $inmate = $db->hostelinmatestable->findOne([
+                                '_id' => $outpass['inmateid']
+                            ]);
+                            $user = $db->usertable->findOne([
+                                '_id' => $inmate['userid']
+                            ]);
+                            echo "<tr>";
+                            echo "<td>" . $inmate['admissionno'] . "</td>";
+                            echo "<td>" . $user['name'] . "</td>";
+                            echo "<td>" . $outpass['place'] . "</td>";
+                            echo "<td>" . $outpass['purpose'] . "</td>";
+                            echo "<td>" . date('Y-m-d', $outpass['outdate']->toDateTime()->getTimestamp()) . "</td>";
+                            echo "<td>" . date('Y-m-d', $outpass['indate']->toDateTime()->getTimestamp()) . "</td>";
+                            echo "<td>";
+                            if ($outpass['outpassstatus'] == 4) {
+                                echo "Active";
+                            }
+                            echo "</td>";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 # Composer dependencies
 /vendor/
 composer.phar
-
+/vendor.*
 # PHP error logs
 error_log
 php_error.log
