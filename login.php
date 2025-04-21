@@ -49,24 +49,27 @@ if (isset($_SESSION["userdetails"])) {
                                                 if (isset($_POST["submit"])) {
                                                     $email = $_POST['email'];
                                                     $password = $_POST['password'];
-                                                    $sql = "SELECT * FROM usertable WHERE email = '$email' AND password = '$password';";
-                                                    $result = $conn->query($sql);
-                                                    if ($result->num_rows > 0) {
-                                                        $row = $result->fetch_assoc();
-                                                        $_SESSION["userdetails"] = $row;
-                                                        if ($row['usertype'] == 3) {
+                                                    
+                                                    $user = findOne('usertable', [
+                                                        'email' => $email,
+                                                        'password' => $password
+                                                    ]);
+
+                                                    if ($user) {
+                                                        $_SESSION["userdetails"] = $user;
+                                                        if ($user['usertype'] == 3) {
                                                             header("Location: admin_page.php");
-                                                        } elseif ($row['usertype'] == 2) {
+                                                        } elseif ($user['usertype'] == 2) {
                                                             header("Location: security_page.php");
                                                         } else {
-
-                                                            $sql = "SELECT * FROM hostelinmatestable WHERE userid = " . $row["userid"] . ";";
-                                                            $result = $conn->query($sql);
-                                                            if ($result->num_rows > 0) {
-                                                                $row = $result->fetch_assoc();
-                                                                $_SESSION["inmatedetails"] = $row;
+                                                            $inmate = findOne('hostelinmatestable', [
+                                                                'userid' => $user['_id']
+                                                            ]);
+                                                            
+                                                            if ($inmate) {
+                                                                $_SESSION["inmatedetails"] = $inmate;
                                                             } else {
-                                                                echo "<script type='text/javascript'>alert('This account is not linked to a hostelinmate')</script>";
+                                                                echo "<script>alert('This account is not linked to a hostelinmate')</script>";
                                                             }
                                                             header("Location: user_page.php");
                                                         }

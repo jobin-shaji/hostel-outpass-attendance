@@ -6,10 +6,13 @@ if (isset($_POST["approve"])) {
     // Retrieve outpass ID from the form
     $outpassid = $_POST["outpassid"];
 
-    // Update outpass status to 1 (approved)
-    $sql = "UPDATE Outpasstable SET outpassstatus = 4  WHERE outpassid = $outpassid";
+    // Update outpass status to 4 (active)
+    $result = updateOne('outpasstable', 
+        ['_id' => new MongoDB\BSON\ObjectId($outpassid)],
+        ['outpassstatus' => 4]
+    );
 
-    if ($conn->query($sql) === TRUE) {
+    if ($result > 0) {
         // Outpass status updated successfully
         header("Location: admin_page.php");
         exit();
@@ -18,14 +21,20 @@ if (isset($_POST["approve"])) {
         echo "<script>alert('Error: Unable to update outpass status.')</script>";
     }
 } elseif (isset($_POST["decline"])) {
-    // Retrieve outpass ID from the form
+    // Retrieve outpass ID and message from the form
     $outpassid = $_POST["outpassid"];
     $message = $_POST["message"];
 
-    // Update outpass status to 2 (declined)
-    $sql = "UPDATE Outpasstable SET outpassstatus = 2 , message = '$message' WHERE outpassid = $outpassid";
+    // Update outpass status to 2 (declined) and add message
+    $result = updateOne('outpasstable',
+        ['_id' => new MongoDB\BSON\ObjectId($outpassid)],
+        [
+            'outpassstatus' => 2,
+            'message' => $message
+        ]
+    );
 
-    if ($conn->query($sql) === TRUE) {
+    if ($result > 0) {
         // Outpass status updated successfully
         header("Location: admin_page.php");
         exit();
@@ -33,15 +42,42 @@ if (isset($_POST["approve"])) {
         // Error updating outpass status
         echo "<script>alert('Error: Unable to update outpass status.')</script>";
     }
+} elseif (isset($_POST["update"])) {
+    // Handle outpass update
+    $outpassid = $_POST["outpassid"];
+    $place = $_POST["place"];
+    $purpose = $_POST["purpose"];
+    $outdate = new MongoDB\BSON\UTCDateTime(strtotime($_POST['outdate']) * 1000);
+    $indate = new MongoDB\BSON\UTCDateTime(strtotime($_POST['indate']) * 1000);
+
+    $result = updateOne('outpasstable',
+        ['_id' => new MongoDB\BSON\ObjectId($outpassid)],
+        [
+            'place' => $place,
+            'purpose' => $purpose,
+            'outdate' => $outdate,
+            'indate' => $indate
+        ]
+    );
+
+    if ($result > 0) {
+        header("Location: user_page.php");
+        exit();
+    } else {
+        echo "<script>alert('Error: Unable to update outpass request.'); window.location.href='user_page.php';</script>";
+        exit();
+    }
 } elseif (isset($_POST["close"])) {
     // Retrieve outpass ID from the form
     $outpassid = $_POST["outpassid"];
-    // $message = $_POST["message"];
 
-    // Update outpass status to 3 (declined)
-    $sql = "UPDATE Outpasstable SET outpassstatus = 3  WHERE outpassid = $outpassid";
+    // Update outpass status to 3 (canceled)
+    $result = updateOne('outpasstable',
+        ['_id' => new MongoDB\BSON\ObjectId($outpassid)],
+        ['outpassstatus' => 3]
+    );
 
-    if ($conn->query($sql) === TRUE) {
+    if ($result > 0) {
         // Outpass status updated successfully
         header("Location: user_page.php");
         exit();
@@ -54,6 +90,4 @@ if (isset($_POST["approve"])) {
     header("Location: list_outpasses.php");
     exit();
 }
-
-// Close connection
-$conn->close();
+?>

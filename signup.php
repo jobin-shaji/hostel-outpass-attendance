@@ -1,5 +1,8 @@
 <?php
 session_start();
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\InsertOneResult;
+
 if (isset($_SESSION["userdetails"])) {
     $row = $_SESSION["userdetails"];
     if ($row['usertype'] == 3) {
@@ -12,8 +15,8 @@ if (isset($_SESSION["userdetails"])) {
     exit();
 } else {
     require("conn.php");
-    //val=0 if validation currect
-    $val = 1
+    //val=0 if validation correct
+    $val = 1;
 ?>
 
     <!DOCTYPE html>
@@ -60,17 +63,19 @@ if (isset($_SESSION["userdetails"])) {
                                         <?php
                                         if (isset($_POST["submit"])) {
                                             $admissionNo = $_POST['admissionNo'];
-                                            $sql = "SELECT * FROM hostelinmatestable WHERE admissionNo = '$admissionNo'";
-                                            $result = $conn->query($sql);
-                                            if ($result->num_rows > 0) {
-                                                echo "Admision No already exists!";
+                                            
+                                            $existingInmate = findOne('hostelinmatestable', [
+                                                'admissionno' => $admissionNo
+                                            ]);
+                                            
+                                            if ($existingInmate) {
+                                                echo "Admission No already exists!";
                                                 $val = 1;
                                             } else {
                                                 $val = 0;
                                             }
                                         }
                                         ?>
-
                                     </div>
                                 </div>
                             </div>
@@ -90,39 +95,42 @@ if (isset($_SESSION["userdetails"])) {
                                         <?php
                                         if (isset($_POST["submit"])) {
                                             $email = $_POST['email'];
-                                            $sql = "SELECT * FROM usertable WHERE email = '$email'";
-                                            $result = $conn->query($sql);
-                                            if ($result->num_rows > 0) {
-                                                echo "Email already exists!";
+                                            
+                                            $existingUser = findOne('usertable', [
+                                                'email' => $email
+                                            ]);
+                                            
+                                            if ($existingUser) {
+                                                echo "Email already used!";
                                             } else {
-                                                if ($val  == 0) {
-                                                    $email = $_POST['email'];
-                                                    $admissionNo = $_POST['admissionNo'];
-                                                    $fullname = $_POST['fullname'];
-                                                    $phone = $_POST['phoneNo'];
-                                                    $password = $_POST['password'];
-
-                                                    // Inserting user data into the database
-                                                    $sql = "INSERT INTO usertable (name, email, password) VALUES ('$fullname', '$email', '$password')";
-                                                    if ($conn->query($sql)) {
-                                                        // Retrieving user ID
-                                                        $sql = "SELECT userid FROM usertable WHERE email = '$email'";
-                                                        $result = $conn->query($sql);
-                                                        if ($result->num_rows > 0) {
-                                                            $row = $result->fetch_assoc();
-                                                            $userid = $row["userid"];
-
-                                                            // Inserting user data into hostelinmatestable
-                                                            $sql = "INSERT INTO hostelinmatestable (admissionno, userid, phone) VALUES ('$admissionNo', '$userid', '$phone')";
-                                                            if ($conn->query($sql)) {
-                                                                header("Location: login.php");
-                                                                exit();
-                                                            } else {
-                                                                echo "<script>alert('Error')</script>";
-                                                            }
+                                                if ($val == 0) {
+                                                    $userDoc = [
+                                                        'name' => $_POST['fullname'],
+                                                        'email' => $email,
+                                                        'password' => $_POST['password'],
+                                                        'usertype' => 1 // Default user type
+                                                    ];
+                                                    
+                                                    $result = insertOne('usertable', $userDoc);
+                                                    if ($result instanceof MongoDB\InsertOneResult) {
+                                                        $userId = $result->getInsertedId();
+                                                        
+                                                        $inmateDoc = [
+                                                            'admissionno' => $_POST['admissionNo'],
+                                                            'userid' => $userId,
+                                                            'phone' => $_POST['phoneNo'],
+                                                            'inmatestatus' => 0,
+                                                            'attendancedate' => new \MongoDB\BSON\UTCDateTime(time() * 1000)
+                                                        ];
+                                                        
+                                                        if (insertOne('hostelinmatestable', $inmateDoc) instanceof MongoDB\InsertOneResult) {
+                                                            header("Location: login.php");
+                                                            exit();
+                                                        } else {
+                                                            echo "<script>alert('Error creating inmate record')</script>";
                                                         }
                                                     } else {
-                                                        echo "<script>alert('Error')</script>";
+                                                        echo "<script>alert('Error creating user')</script>";
                                                     }
                                                 }
                                             }

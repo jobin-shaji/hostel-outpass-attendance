@@ -1,4 +1,5 @@
-<!-- 
+<?php
+/*
     usertype 
     3 -> admin
     2 -> security
@@ -16,13 +17,45 @@
     0 -> pending
 
     inmatestatus
-    0 -> in
+    0 -> in 
     1 -> out
--->
-<?php
-$conn = new mysqli("localhost", "root", "", "hostel");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+*/
+
+require 'vendor/autoload.php';
+
+try {
+    $client = new MongoDB\Client("mongodb://localhost:27017");
+    $db = $client->hostel;
+} catch (Exception $e) {
+    die("Connection failed: " . $e->getMessage());
+}
+
+// Helper functions for MongoDB operations
+function findOne($collection, $filter) {
+    global $db;
+    return (array)$db->$collection->findOne($filter);
+}
+
+function find($collection, $filter = [], $options = []) {
+    global $db;
+    return $db->$collection->find($filter, $options)->toArray();
+}
+
+function insertOne($collection, $document) {
+    global $db;
+    $result = $db->$collection->insertOne($document);
+    return $result;
+}
+
+function updateOne($collection, $filter, $update) {
+    global $db;
+    $result = $db->$collection->updateOne($filter, ['$set' => $update]);
+    return $result->getModifiedCount();
+}
+
+function deleteOne($collection, $filter) {
+    global $db;
+    $result = $db->$collection->deleteOne($filter);
+    return $result->getDeletedCount();
 }
 ?>
-<!-- // echo "Connected successfully"; -->
